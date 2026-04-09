@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import type { LinkComponentBaseProps, Method } from '@inertiajs/core';
-import { Link } from '@inertiajs/vue3';
-
 type Props = {
-    href: LinkComponentBaseProps['href'];
+    href: string;
     tabindex?: number;
-    method?: Method;
-    as?: string;
 };
 
 defineProps<Props>();
+
+function isExternal(url: string) {
+    return url.startsWith('http://') || url.startsWith('https://');
+}
 </script>
 
 <template>
-    <Link
+    <a
+        v-if="isExternal(href)"
         :href="href"
         :tabindex="tabindex"
-        :method="method"
-        :as="as"
+        target="_blank"
+        rel="noopener noreferrer"
         class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
     >
         <slot />
-    </Link>
+    </a>
+    <RouterLink
+        v-else
+        :to="href"
+        :tabindex="tabindex"
+        class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+    >
+        <slot />
+    </RouterLink>
 </template>

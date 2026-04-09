@@ -6,7 +6,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { toUrl } from '@/lib/utils';
 import type { NavItem } from '@/types';
 
 type Props = {
@@ -29,7 +28,7 @@ defineProps<Props>();
                         as-child
                     >
                         <a
-                            :href="toUrl(item.href)"
+                            :href="item.href"
                             target="_blank"
                             rel="noopener noreferrer"
                         >

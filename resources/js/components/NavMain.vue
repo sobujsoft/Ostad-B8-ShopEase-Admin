@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -27,10 +26,10 @@ const { isCurrentUrl } = useCurrentUrl();
                     :is-active="isCurrentUrl(item.href)"
                     :tooltip="item.title"
                 >
-                    <Link :href="item.href">
+                    <RouterLink :to="item.href">
                         <component :is="item.icon" />
                         <span>{{ item.title }}</span>
-                    </Link>
+                    </RouterLink>
                 </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>

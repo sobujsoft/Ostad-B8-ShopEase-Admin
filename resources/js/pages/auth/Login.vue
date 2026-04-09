@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -8,47 +9,55 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
+import { useAuthStore } from '@/stores/auth';
 
-defineOptions({
-    layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
-    },
+const router = useRouter();
+const authStore = useAuthStore();
+
+const form = ref({
+    email: '',
+    password: '',
+    remember: false,
 });
 
-defineProps<{
-    status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
-}>();
+const errors = ref<Record<string, string>>({});
+const processing = ref(false);
+
+async function handleSubmit() {
+    errors.value = {};
+    processing.value = true;
+
+    try {
+        await authStore.login({
+            email: form.value.email,
+            password: form.value.password,
+        });
+        router.push({ name: 'dashboard' });
+    } catch (error: any) {
+        if (error.response?.status === 422) {
+            const serverErrors = error.response.data.errors ?? {};
+            for (const [key, messages] of Object.entries(serverErrors)) {
+                errors.value[key] = (messages as string[])[0];
+            }
+        } else {
+            errors.value.email =
+                error.response?.data?.message ?? 'Login failed. Please try again.';
+        }
+    } finally {
+        processing.value = false;
+    }
+}
 </script>
 
 <template>
-    <Head title="Log in" />
-
-    <div
-        v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
-    >
-        {{ status }}
-    </div>
-
-    <Form
-        v-bind="store.form()"
-        :reset-on-success="['password']"
-        v-slot="{ errors, processing }"
-        class="flex flex-col gap-6"
-    >
+    <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
         <div class="grid gap-6">
             <div class="grid gap-2">
                 <Label for="email">Email address</Label>
                 <Input
                     id="email"
+                    v-model="form.email"
                     type="email"
-                    name="email"
                     required
                     autofocus
                     :tabindex="1"
@@ -61,18 +70,10 @@ defineProps<{
             <div class="grid gap-2">
                 <div class="flex items-center justify-between">
                     <Label for="password">Password</Label>
-                    <TextLink
-                        v-if="canResetPassword"
-                        :href="request()"
-                        class="text-sm"
-                        :tabindex="5"
-                    >
-                        Forgot password?
-                    </TextLink>
                 </div>
                 <PasswordInput
                     id="password"
-                    name="password"
+                    v-model="form.password"
                     required
                     :tabindex="2"
                     autocomplete="current-password"
@@ -83,7 +84,12 @@ defineProps<{
 
             <div class="flex items-center justify-between">
                 <Label for="remember" class="flex items-center space-x-3">
-                    <Checkbox id="remember" name="remember" :tabindex="3" />
+                    <Checkbox
+                        id="remember"
+                        :checked="form.remember"
+                        @update:checked="form.remember = $event"
+                        :tabindex="3"
+                    />
                     <span>Remember me</span>
                 </Label>
             </div>
@@ -93,19 +99,15 @@ defineProps<{
                 class="mt-4 w-full"
                 :tabindex="4"
                 :disabled="processing"
-                data-test="login-button"
             >
                 <Spinner v-if="processing" />
                 Log in
             </Button>
         </div>
 
-        <div
-            class="text-center text-sm text-muted-foreground"
-            v-if="canRegister"
-        >
+        <div class="text-center text-sm text-muted-foreground">
             Don't have an account?
-            <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            <TextLink href="/register" :tabindex="5">Sign up</TextLink>
         </div>
-    </Form>
+    </form>
 </template>
