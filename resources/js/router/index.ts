@@ -57,6 +57,41 @@ const routes: RouteRecordRaw[] = [
                     breadcrumbs: [{ title: 'Dashboard', href: '/dashboard' }],
                 },
             },
+            {
+                path: 'categories',
+                name: 'categories.index',
+                component: () => import('@/pages/categories/Index.vue'),
+                meta: {
+                    breadcrumbs: [
+                        { title: 'Dashboard', href: '/dashboard' },
+                        { title: 'Categories', href: '/categories' },
+                    ],
+                },
+            },
+            {
+                path: 'categories/create',
+                name: 'categories.create',
+                component: () => import('@/pages/categories/Create.vue'),
+                meta: {
+                    breadcrumbs: [
+                        { title: 'Dashboard', href: '/dashboard' },
+                        { title: 'Categories', href: '/categories' },
+                        { title: 'Create', href: '/categories/create' },
+                    ],
+                },
+            },
+            {
+                path: 'categories/:id/edit',
+                name: 'categories.edit',
+                component: () => import('@/pages/categories/Edit.vue'),
+                meta: {
+                    breadcrumbs: [
+                        { title: 'Dashboard', href: '/dashboard' },
+                        { title: 'Categories', href: '/categories' },
+                        { title: 'Edit', href: '#' },
+                    ],
+                },
+            },
         ],
     },
 ];
