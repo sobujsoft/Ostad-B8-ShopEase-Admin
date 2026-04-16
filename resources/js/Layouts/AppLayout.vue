@@ -139,7 +139,9 @@ const userInitial = computed(() => {
 });
 
 function isActive(href) {
-    return window.location.pathname === href;
+    const path = window.location.pathname;
+    if (href === '/dashboard') return path === href;
+    return path.startsWith(href);
 }
 
 async function handleLogout() {
