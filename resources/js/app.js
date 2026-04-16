@@ -1,7 +1,25 @@
 import './bootstrap';
 import { createApp, h } from 'vue';
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+
+const guestRoutes = ['/login', '/register'];
+const authRoutes  = ['/dashboard'];
+
+router.on('before', (event) => {
+    const to    = event.detail.visit.url.pathname;
+    const token = localStorage.getItem('auth_token');
+
+    if (authRoutes.some((r) => to.startsWith(r)) && !token) {
+        event.preventDefault();
+        router.visit('/login');
+    }
+
+    if (guestRoutes.includes(to) && token) {
+        event.preventDefault();
+        router.visit('/dashboard');
+    }
+});
 
 createInertiaApp({
     title: (title) => `${title} - ${import.meta.env.VITE_APP_NAME ?? 'Laravel'}`,
