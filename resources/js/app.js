@@ -4,7 +4,7 @@ import { createInertiaApp, router } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
 const guestRoutes = ['/login', '/register'];
-const authRoutes  = ['/dashboard'];
+const authRoutes  = ['/dashboard', '/categories'];
 
 router.on('before', (event) => {
     const to    = event.detail.visit.url.pathname;

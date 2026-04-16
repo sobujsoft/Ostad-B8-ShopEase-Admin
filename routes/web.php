@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,3 +16,7 @@ Route::middleware('guest')->group(function () {
 
 // Protected routes
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('/categories',              [CategoryController::class, 'index'])->name('categories.index');
+Route::get('/categories/create',       [CategoryController::class, 'create'])->name('categories.create');
+Route::get('/categories/{id}/edit',    [CategoryController::class, 'edit'])->name('categories.edit');
