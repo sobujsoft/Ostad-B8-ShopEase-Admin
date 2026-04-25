@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\HeroBannerController;
 use App\Http\Controllers\SectionController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,3 +29,7 @@ Route::get('/products/create',      [ProductController::class, 'create'])->name(
 Route::get('/products/{id}/edit',   [ProductController::class, 'edit'])->name('products.edit');
 
 Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
+
+Route::get('/hero-banners',              [HeroBannerController::class, 'index'])->name('hero-banners.index');
+Route::get('/hero-banners/create',       [HeroBannerController::class, 'create'])->name('hero-banners.create');
+Route::get('/hero-banners/{id}/edit',    [HeroBannerController::class, 'edit'])->name('hero-banners.edit');
